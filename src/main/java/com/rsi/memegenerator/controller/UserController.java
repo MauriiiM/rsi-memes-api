@@ -30,7 +30,6 @@ public class UserController {
 
     @PostMapping(SIGN_UP)
     ResponseEntity create(@RequestParam String email, @RequestParam String password) {
-
         if (userRepository.findByEmail(email) == null) {
             User newUser = new User();
             newUser.setEmail(email);

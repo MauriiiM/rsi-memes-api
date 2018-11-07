@@ -1,7 +1,6 @@
 package com.rsi.memegenerator.constant;
 
 public class URLConstants {
-
     //Service
     public static final String API = "/api";
     public static final String USER = "/user";
@@ -16,5 +15,4 @@ public class URLConstants {
 
     public static final String UPLOAD_BLANK_MEME = "/upload-blank-meme";
     public static final String UPLOAD_CREATED_MEME = "/upload-created-meme";
-
 }

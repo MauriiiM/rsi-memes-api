@@ -21,8 +21,6 @@ public class BucketController {
 
     @PostMapping(UPLOAD_BLANK_MEME)
     public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        if(file.getSize() > 3 * FileSizeConstants.MEGIBYTE)
-            return "file too big";
         return this.s3Client.uploadFile(file, BLANK_MEMES);
     }
 
