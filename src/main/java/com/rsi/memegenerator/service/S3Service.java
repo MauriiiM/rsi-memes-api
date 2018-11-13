@@ -9,8 +9,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.rsi.memegenerator.model.Meme;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Date;
 
 @Service
-public class S3Client {
+public class S3Service {
 
     private AmazonS3 s3client;
 
@@ -47,23 +47,18 @@ public class S3Client {
         return "Successfully deleted";
     }
 
-    public String downloadFile(String fileUrl) {
-
-        return null;
-    }
-
-    public String uploadFile(MultipartFile multipartFile, String toBucketPath) {
+    public Meme upload(MultipartFile multipartFile, String toBucketPath) {
         String fileUrl = "";
         try {
-            File file = convertMultiPartToFile(multipartFile);
-            String fileName = generateFileName(multipartFile);
-            fileUrl = endpointUrl + "/" + bucketName + toBucketPath + "/" + fileName;
-            uploadFileToS3bucket(toBucketPath, fileName, file);
-            file.delete();
+            Meme meme = new Meme();
+            meme.setFile(convertMultiPartToFile(multipartFile));
+            meme.setFilename(generateFileName(multipartFile));
+            meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
+            return meme;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fileUrl;
+        return null;
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
@@ -74,8 +69,8 @@ public class S3Client {
         return convFile;
     }
 
-    private String generateFileName(MultipartFile multiPart) {
-        return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+    private String generateFileName(MultipartFile file) {
+        return new Date().getTime() + "-" + file.getOriginalFilename().replace(" ", "_");
     }
 
     private String downloadFileFromS3Bucket(String filename) {

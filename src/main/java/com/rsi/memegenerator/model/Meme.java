@@ -1,31 +1,33 @@
 package com.rsi.memegenerator.model;
 
-import lombok.*;
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.File;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
-@NoArgsConstructor
-public class User {
+public class Meme {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @GenericGenerator(name = "native", strategy = "native")
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long uuid; //= java.util.UUID.randomUUID();
-    private @NonNull
-    String email;
-    private @NonNull
-    String password;
+    @Column(updatable = false, nullable = false)
+    private int uuid;
 
-    @Override
-    public String toString() {
-        return uuid.toString() + ": email=\"" + email + "\"";
-    }
+    @Column(name="meme_url")
+    private String s3url;
+
+    @Column
+    private Date uploadDate;
+
+    @Column
+    private String filename;
+    private File file;
 }
