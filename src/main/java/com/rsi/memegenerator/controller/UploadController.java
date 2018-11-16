@@ -1,5 +1,6 @@
 package com.rsi.memegenerator.controller;
 
+import com.rsi.memegenerator.model.Meme;
 import com.rsi.memegenerator.service.DatabaseService;
 import com.rsi.memegenerator.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,11 @@ public class UploadController {
         this.dbService = dbService;
     }
 
-    @PostMapping(UPLOAD_BLANK_MEME)
-    public void uploadBlankMeme(@RequestPart(value = "file") MultipartFile image) {
-        dbService.insertBlank(s3Service.upload(image, BLANK_MEMES));
-    }
-
-    @PostMapping(UPLOAD_CREATED_MEME)
-    public void uploadCreatedMeme(@RequestPart(value = "file") MultipartFile image) {
-        s3Service.upload(image, CREATED_MEMES);
+    @PostMapping(UPLOAD_MEME)
+    public void uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart(value = "tags") String tags) {
+        Meme uploadedMeme = s3Service.upload(image, IMAGES);
+        uploadedMeme.setTags(tags.split(" "));
+        dbService.insert(uploadedMeme);
     }
 
 //    @PostMapping(UPLOAD_BLANK_MEME)

@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Service
@@ -53,7 +54,9 @@ public class S3Service {
             Meme meme = new Meme();
             meme.setFile(convertMultiPartToFile(multipartFile));
             meme.setFilename(generateFileName(multipartFile));
+            meme.setUploadDate(new Timestamp(System.currentTimeMillis()));
             meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
+            uploadFileToS3bucket(toBucketPath, meme.getFilename(), meme.getFile());
             return meme;
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,11 +74,6 @@ public class S3Service {
 
     private String generateFileName(MultipartFile file) {
         return new Date().getTime() + "-" + file.getOriginalFilename().replace(" ", "_");
-    }
-
-    private String downloadFileFromS3Bucket(String filename) {
-        s3client.getObject(new GetObjectRequest(bucketName, filename));
-        return null;
     }
 
     private void uploadFileToS3bucket(String inBucketPath, String fileName, File file) {

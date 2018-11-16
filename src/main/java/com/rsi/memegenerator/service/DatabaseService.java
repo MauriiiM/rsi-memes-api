@@ -20,47 +20,60 @@ public class DatabaseService {
     private String username;
     @Value("${amazonRdsProperties.password}")
     private String password;
-    private Connection connection;
     private Statement setupStatement;
 
     /**
      * Insert a meme to the database
-     * @param meme
+     *
+     * @param meme containing fields needed to insert into database
      */
-    public void insertBlank(Meme meme) {
+    public void insert(Meme meme) {
         try {
-            openRemoteConnection();
-            PreparedStatement stmt = connection.prepareStatement("");
-            stmt.execute();
-            stmt.close();
-            closeRemoteConnection();
+            Connection connection = openRemoteConnection();
+            String query = "INSERT INTO image (image_id, image_s3_url, image_upload_date, image_file_name) VALUES (?, ?, ? ,?)";
+            PreparedStatement memeTableStmt = connection
+                    .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            memeTableStmt.setLong(1, meme.getId());
+            memeTableStmt.setString(2, meme.getS3url());
+            memeTableStmt.setTimestamp(3, meme.getUploadDate());
+            memeTableStmt.setString(4, meme.getFilename());
+            memeTableStmt.executeUpdate();
+            ResultSet resultSet = memeTableStmt.getGeneratedKeys();
+            resultSet.next();
+
+            meme.setId(resultSet.getLong(1));
+            PreparedStatement tagTableStmt = connection
+                    .prepareStatement("INSERT INTO tag (tag_string, tag_image_id_ref) VALUES(?, " + meme.getId() + ")");
+            int numTags = meme.getTags().length;
+            for (int i = 0; i < numTags; i++) {
+                tagTableStmt.setString(1, meme.getTags()[i]);
+                tagTableStmt.addBatch();
+            }
+            tagTableStmt.executeBatch();
+            connection.commit();
+            System.out.println("Query complete. Closing Statements.");
+            memeTableStmt.close();
+            tagTableStmt.close();
+            closeRemoteConnection(connection);
         } catch (SQLException e) { e.printStackTrace(); }
     }
-
-//    void insertCreated(Meme meme) {
-//        connection.prepareStatement("")
-//    }
 
     /**
      * opens connection to database using application.yml fields
      * Connection should be "opened" and "closed" on every query.
      */
-    private void openRemoteConnection() {
+    private Connection openRemoteConnection() throws SQLException {
         String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName;
         System.out.println("Connecting to database: " + jdbcUrl);
-        try {
-            connection = DriverManager.getConnection(jdbcUrl, username, password);
-        } catch (SQLException e) { e.printStackTrace(); }
+        Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+        connection.setAutoCommit(false);
+        return connection;
     }
 
-    private void closeRemoteConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connection = null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    private void closeRemoteConnection(Connection connection) throws SQLException {
+        System.out.println("Closing connection.");
+        connection.close();
+        connection = null;
     }
 }
+

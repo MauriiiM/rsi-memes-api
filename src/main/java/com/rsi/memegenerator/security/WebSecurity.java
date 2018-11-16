@@ -1,22 +1,16 @@
 package com.rsi.memegenerator.security;
 
-import com.rsi.memegenerator.model.UserDetailsServiceImpl;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.context.annotation.Bean;
 
-import static com.rsi.memegenerator.constant.URLConstants.API;
-import static com.rsi.memegenerator.constant.URLConstants.STORAGE;
-import static com.rsi.memegenerator.constant.URLConstants.UPLOAD_BLANK_MEME;
-import static com.rsi.memegenerator.constant.URLConstants.USER;
+import static com.rsi.memegenerator.constant.URLConstants.*;
 
 
 /**
@@ -24,11 +18,9 @@ import static com.rsi.memegenerator.constant.URLConstants.USER;
  */
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
-    private UserDetailsServiceImpl userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public WebSecurity(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurity(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -43,28 +35,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http
             .cors()
         .and()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.POST, STORAGE + UPLOAD_BLANK_MEME)
-            .permitAll()
-        .and()
             .csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, API + USER + "/*")
+            .antMatchers(HttpMethod.POST, STORAGE + UPLOAD_MEME)
             .permitAll()
+//        .and()
+//            .csrf()
+//            .disable()
+//            .authorizeRequests()
+//            .antMatchers(HttpMethod.POST, API + USER + "/*")
+//            .permitAll()
             .anyRequest()
             .authenticated()
-        .and()
-            .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-            .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Bean
