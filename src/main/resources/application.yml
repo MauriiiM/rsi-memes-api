@@ -7,7 +7,10 @@ amazonStorageProperties:
   bucketName: rsi-memes
 
 amazonRdsProperties:
-  endpointUrl: rsi-memes.cvdjwayq6x4k.us-west-2.rds.amazonaws.com
+  driver: com.mysql.cj.jdbc.Driver
+  dbName: XXXXXXXXX
+  hostname: rsi-memes.cvdjwayq6x4k.us-west-2.rds.amazonaws.com
   region: us-west-2a
   port: 3306
   username: XXXXXXXXX
+  password: XXXXXXXXX
