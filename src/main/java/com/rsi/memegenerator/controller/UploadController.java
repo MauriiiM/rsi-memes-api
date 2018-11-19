@@ -25,7 +25,7 @@ public class UploadController {
     @PostMapping(UPLOAD_MEME)
     public void uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart(value = "tags") String tags) {
         Meme uploadedMeme = s3Service.upload(image, IMAGES);
-        uploadedMeme.setTags(tags.split(" "));
+        uploadedMeme.setTags(tags.toLowerCase().split(""));
         dbService.insert(uploadedMeme);
     }
 
