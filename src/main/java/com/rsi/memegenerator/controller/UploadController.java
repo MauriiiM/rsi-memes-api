@@ -12,7 +12,6 @@ import static com.rsi.memegenerator.constant.URLConstants.*;
 @RestController
 @RequestMapping(STORAGE)
 public class UploadController {
-
     private S3Service s3Service;
     private DatabaseService dbService;
 
@@ -22,17 +21,17 @@ public class UploadController {
         this.dbService = dbService;
     }
 
-    @PostMapping(UPLOAD_MEME)
+    @PostMapping(IMAGES)
     public void uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart(value = "tags") String tags) {
         Meme uploadedMeme = s3Service.upload(image, IMAGES);
         uploadedMeme.setTags(tags.toLowerCase().split(""));
         dbService.insert(uploadedMeme);
     }
 
-//    @PostMapping(UPLOAD_BLANK_MEME)
-//    public String downloadFile(@RequestBody String urlString) {
-//        return this.s3Service.downloadFileFromS3Bucket(urlString);
-//    }
+    @GetMapping(IMAGES)
+    public String[] downloadURLs(@RequestPart String tags) {
+        return dbService.selectTags(tags.toLowerCase().split(" "));
+    }
 
     @DeleteMapping(DELETE_FILE)
     public String deleteFile(@RequestPart(value = "url") String fileUrl) {

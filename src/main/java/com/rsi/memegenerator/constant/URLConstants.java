@@ -12,5 +12,4 @@ public class URLConstants {
     public static final String DELETE_FILE = "/delete-file";
     public static final String IMAGES = "/images";
 
-    public static final String UPLOAD_MEME = "/upload-meme";
 }
