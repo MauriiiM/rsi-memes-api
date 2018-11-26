@@ -48,20 +48,15 @@ public class S3Service {
         return "Successfully deleted";
     }
 
-    public Meme upload(MultipartFile multipartFile, String toBucketPath) {
+    public Meme upload(MultipartFile multipartFile, String toBucketPath) throws IOException {
         String fileUrl = "";
-        try {
-            Meme meme = new Meme();
-            meme.setFile(convertMultiPartToFile(multipartFile));
-            meme.setFilename(generateFileName(multipartFile));
-            meme.setUploadDate(new Timestamp(System.currentTimeMillis()));
-            meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
-            uploadFileToS3bucket(toBucketPath, meme.getFilename(), meme.getFile());
-            return meme;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        Meme meme = new Meme();
+        meme.setFile(convertMultiPartToFile(multipartFile));//can throw an error
+        meme.setFilename(generateFileName(multipartFile));
+        meme.setUploadDate(new Timestamp(System.currentTimeMillis()));
+        meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
+        uploadFileToS3bucket(toBucketPath, meme.getFilename(), meme.getFile());
+        return meme;
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {

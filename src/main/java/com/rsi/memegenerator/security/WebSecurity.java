@@ -25,7 +25,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Configuration for skipped by Spring Security, such as a POST from "/sign-up".
+     * Configuration for what's skipped by Spring Security, such as a POST from "/sign-up".
      *
      * @param http not too sure
      * @throws Exception also not too sure
@@ -38,14 +38,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             .csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(STORAGE + IMAGES)
+            .antMatchers(STORAGE + IMAGES + "/**")
             .permitAll()
-//        .and()
-//            .csrf()
-//            .disable()
-//            .authorizeRequests()
-//            .antMatchers(HttpMethod.POST, API + USER + "/*")
-//            .permitAll()
+        .and()
+            .csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.POST, API + USER + "/*")
+            .permitAll()
             .anyRequest()
             .authenticated()
         ;

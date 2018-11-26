@@ -6,6 +6,11 @@ import com.rsi.memegenerator.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 import static com.rsi.memegenerator.constant.URLConstants.*;
 
@@ -22,15 +27,25 @@ public class UploadController {
     }
 
     @PostMapping(IMAGES)
-    public void uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart(value = "tags") String tags) {
-        Meme uploadedMeme = s3Service.upload(image, IMAGES);
-        uploadedMeme.setTags(tags.toLowerCase().split(""));
-        dbService.insert(uploadedMeme);
+    public String uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart String tags) {
+        String response;
+        try {
+            Meme uploadedMeme = s3Service.upload(image, IMAGES);
+            uploadedMeme.setTags(tags.toLowerCase().split(" "));
+            dbService.insert(uploadedMeme);
+            response = "uploaded";
+        } catch (IOException | SQLException e){
+            response = "nil"; //@TODO research more into this
+        }
+        return response;
     }
 
-    @GetMapping(IMAGES)
-    public String[] downloadURLs(@RequestPart String tags) {
-        return dbService.selectTags(tags.toLowerCase().split(" "));
+    @GetMapping(IMAGES + "/**")
+    public String[] downloadURLs() {
+        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequest();
+        String requestedValue = builder.buildAndExpand().getPath();
+        String tags = requestedValue.substring(requestedValue.indexOf("&q=") + 3);
+        return dbService.selectTags(tags.toLowerCase().split(","));
     }
 
     @DeleteMapping(DELETE_FILE)

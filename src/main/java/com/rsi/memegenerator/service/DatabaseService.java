@@ -28,42 +28,42 @@ public class DatabaseService {
      *
      * @param meme containing fields needed to insert into database
      */
-    public void insert(Meme meme) {
-        try {
-            Connection connection = openRemoteConnection(false);
-            String query = "INSERT INTO image (image_id, image_s3_url, image_upload_date, image_file_name) VALUES (?, ?, ? ,?)";
-            PreparedStatement memeTableStmt = connection
-                    .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            memeTableStmt.setLong(1, meme.getId());
-            memeTableStmt.setString(2, meme.getS3url());
-            memeTableStmt.setTimestamp(3, meme.getUploadDate());
-            memeTableStmt.setString(4, meme.getFilename());
-            memeTableStmt.executeUpdate();
-            ResultSet resultSet = memeTableStmt.getGeneratedKeys();
-            resultSet.next();
-            meme.setId(resultSet.getLong(1));
+    public void insert(Meme meme) throws SQLException {
+        Connection connection = openRemoteConnection(false);
+        String query = "INSERT INTO image (image_id, image_s3_url, image_upload_date, image_file_name) VALUES (?, ?, ? ,?)";
+        PreparedStatement memeTableStmt = connection
+                .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        memeTableStmt.setLong(1, meme.getId());
+        memeTableStmt.setString(2, meme.getS3url());
+        memeTableStmt.setTimestamp(3, meme.getUploadDate());
+        memeTableStmt.setString(4, meme.getFilename());
+        memeTableStmt.executeUpdate();
+        ResultSet resultSet = memeTableStmt.getGeneratedKeys();
+        resultSet.next();
+        meme.setId(resultSet.getLong(1));
 
-            PreparedStatement tagTableStmt = connection
-                    .prepareStatement("INSERT INTO tag (tag_string, tag_image_id_ref) VALUES(?, " + meme.getId() + ")");
-            int numTags = meme.getTags().length;
-            for (int i = 0; i < numTags; i++) {
-                tagTableStmt.setString(1, meme.getTags()[i]);
-                tagTableStmt.addBatch();
-            }
-            tagTableStmt.executeBatch();
-            connection.commit();
-            System.out.println("Query complete. Closing Statements.");
-            memeTableStmt.close();
-            tagTableStmt.close();
-            closeRemoteConnection(connection);
-        } catch (SQLException e) { e.printStackTrace(); }
+        PreparedStatement tagTableStmt = connection
+                .prepareStatement("INSERT INTO tag (tag_string, tag_image_id_ref) VALUES(?, " + meme.getId() + ")");
+        int numTags = meme.getTags().length;
+        for (int i = 0; i < numTags; i++) {
+            tagTableStmt.setString(1, meme.getTags()[i]);
+            tagTableStmt.addBatch();
+        }
+        tagTableStmt.executeBatch();
+        connection.commit();
+        System.out.println("Query complete. Closing Statements.");
+        memeTableStmt.close();
+        tagTableStmt.close();
+        closeRemoteConnection(connection);
     }
 
     public String[] selectTags(String[] tags) {
         ArrayList<String> urls = new ArrayList<>();
         StringBuilder query = new StringBuilder();
-        query.append("SELECT DISTINCT i.image_s3_url FROM image AS i " +
-                "INNER JOIN tag AS t ON t.tag_string = \"" + tags[0] + "\"");
+        query.append("SELECT DISTINCT i.image_id, i.image_s3_url FROM image AS i " +
+                "INNER JOIN tag AS t " +
+                "ON t.tag_image_id_ref = i.image_id " +
+                "WHERE t.tag_string = \"" + tags[0] + "\"");
         try {
             Connection connection = openRemoteConnection();
             if (tags.length > 1)
