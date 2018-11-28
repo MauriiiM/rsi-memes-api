@@ -5,10 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.rsi.memegenerator.model.Meme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +20,6 @@ import java.util.Date;
 
 @Service
 public class S3Service {
-
     private AmazonS3 s3client;
 
     @Value("${amazonStorageProperties.endpointUrl}")
@@ -35,6 +31,22 @@ public class S3Service {
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
 
+//    public String deleteFileFromS3Bucket(String fileUrl) {
+//        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+//        s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
+//        return "Successfully deleted";
+//    }
+
+    public Meme upload(MultipartFile multipartFile, String toBucketPath) throws IOException {
+        String fileUrl = "";
+        Meme meme = new Meme();
+        meme.setFilename(generateFileName(multipartFile));
+        meme.setUploadDate(new Timestamp(System.currentTimeMillis()));
+        meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
+        uploadFileToS3bucket(toBucketPath, meme.getFilename(), multipartFile);
+        return meme;
+    }
+
     @PostConstruct
     private void initializeAmazon() {
         BasicAWSCredentials creds = new BasicAWSCredentials(this.accessKey, this.secretKey);
@@ -42,37 +54,15 @@ public class S3Service {
                 .withCredentials(new AWSStaticCredentialsProvider(creds)).withRegion(Regions.US_WEST_2).build();
     }
 
-    public String deleteFileFromS3Bucket(String fileUrl) {
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-        s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
-        return "Successfully deleted";
-    }
-
-    public Meme upload(MultipartFile multipartFile, String toBucketPath) throws IOException {
-        String fileUrl = "";
-        Meme meme = new Meme();
-        meme.setFile(convertMultiPartToFile(multipartFile));//can throw an error
-        meme.setFilename(generateFileName(multipartFile));
-        meme.setUploadDate(new Timestamp(System.currentTimeMillis()));
-        meme.setS3url(endpointUrl + "/" + bucketName + toBucketPath + "/" + meme.getFilename());
-        uploadFileToS3bucket(toBucketPath, meme.getFilename(), meme.getFile());
-        return meme;
-    }
-
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
-
     private String generateFileName(MultipartFile file) {
         return new Date().getTime() + "-" + file.getOriginalFilename().replace(" ", "_");
     }
 
-    private void uploadFileToS3bucket(String inBucketPath, String fileName, File file) {
-        s3client.putObject(new PutObjectRequest(bucketName + inBucketPath, fileName, file)
+    private void uploadFileToS3bucket(String inBucketPath, String fileName, MultipartFile file) throws IOException{
+        ObjectMetadata data = new ObjectMetadata();
+        data.setContentType(file.getContentType());
+        data.setContentLength(file.getSize());
+        s3client.putObject(new PutObjectRequest(bucketName + inBucketPath, fileName, file.getInputStream(), data)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 }

@@ -48,8 +48,8 @@ public class UploadController {
         return dbService.selectTags(tags.toLowerCase().split(","));
     }
 
-    @DeleteMapping(DELETE_FILE)
-    public String deleteFile(@RequestPart(value = "url") String fileUrl) {
-        return s3Service.deleteFileFromS3Bucket(fileUrl);
-    }
+//    @DeleteMapping(DELETE_FILE)
+//    public String deleteFile(@RequestPart(value = "url") String fileUrl) {
+//        return s3Service.deleteFileFromS3Bucket(fileUrl);
+//    }
 }
