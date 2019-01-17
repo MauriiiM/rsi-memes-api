@@ -1,4 +1,5 @@
 # RSI Memes Server
+### Started and created by RSI fall '18 JA, Mauricio Monsivais
 
 ## Prerequisites
 - Have java JDK 10 or later
@@ -12,3 +13,6 @@
 # Setup for AWS
 Create an AWS RDS MySQL instance. When completed, type in all respective fields in `application.yml`. Make sure your AWS
 RDS instance has security settings set correctly (specifically _Public accessibility_).
+
+## Disclaimer
+**NEVER** upload `application.yml`!! Find and implement correct way to handle this.
