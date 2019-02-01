@@ -4,7 +4,8 @@
 ## Prerequisites
 - Have java JDK 10 or later
 - install Maven
-- Note that if you're using IntelliJ, you'll want to install the Lombok plugin (available from IDE settings) and also enable annotation processing.
+- Note that if you're using IntelliJ, you'll want to install the Lombok plugin (available from IDE settings) and also
+enable annotation processing.
 
 ## Executing
 * Maven 3.5.4 needed to run code (and JDK 1.7+)
@@ -12,7 +13,9 @@
 
 # Setup for AWS
 Create an AWS RDS MySQL instance. When completed, type in all respective fields in `application.yml`. Make sure your AWS
-RDS instance has security settings set correctly (specifically _Public accessibility_).
+RDS instance has security settings set correctly (specifically _Public accessibility_). To upload code to EC2
+or Beanstalk, do a `mvn deploy` or if on IntelliJ, there's an action for it on one of the side tabs.
+Then upload created jar file and run it.
 
 ## Disclaimer
 **NEVER** upload `application.yml`!! Find and implement correct way to handle this.

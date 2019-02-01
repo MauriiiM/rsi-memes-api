@@ -14,6 +14,8 @@ import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @EnableAutoConfiguration
 @SpringBootApplication
@@ -34,7 +36,10 @@ public class MemeGeneratorApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+        List allowedOrigins = new LinkedList<>();
+        allowedOrigins.add("http://localhost:4200");
+        allowedOrigins.add("http://localhost:8080");
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);
@@ -46,8 +51,8 @@ public class MemeGeneratorApplication {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize("10MB");
-        factory.setMaxRequestSize("10MB");
+        factory.setMaxFileSize("5MB");
+        factory.setMaxRequestSize("5MB");
         return factory.createMultipartConfig();
 //    }
     }

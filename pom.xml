@@ -5,11 +5,11 @@
 
     <groupId>com.rsi</groupId>
     <artifactId>meme-generator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.11</version>
     <packaging>jar</packaging>
 
     <name>meme-generator</name>
-    <description>Server for RSI Meme Generator</description>
+    <description>Backend for RSI Meme Generator</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -21,7 +21,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>10</java.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -57,21 +59,6 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-
-        <!-- Hibernate -->
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-core</artifactId>-->
-            <!--<version>5.3.7.Final</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate.validator</groupId>-->
-            <!--<artifactId>hibernate-validator</artifactId>-->
-            <!--<version>6.0.13.Final</version>-->
-        <!--</dependency>-->
-
-
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -101,12 +88,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!--<configuration>-->
-                <!--<executable>true</executable>-->
-                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>
-
-
 </project>

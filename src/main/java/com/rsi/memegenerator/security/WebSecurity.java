@@ -10,7 +10,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.context.annotation.Bean;
 
-import static com.rsi.memegenerator.constant.URLConstants.*;
+import static com.rsi.memegenerator.constant.Routes.*;
 
 
 /**
@@ -25,7 +25,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Configuration for what's skipped by Spring Security, such as a POST from "/sign-up".
+     * Configuration for what HTTP Requests at certain routes are skipped by Spring Security,  from "/sign-up".
      *
      * @param http not too sure
      * @throws Exception also not too sure
@@ -35,17 +35,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http
             .cors()
         .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET,"/")
+            .permitAll()
+        .and()
             .csrf()
             .disable()
             .authorizeRequests()
             .antMatchers(STORAGE + IMAGES + "/**")
             .permitAll()
-//        .and()
-//            .csrf()
-//            .disable()
-//            .authorizeRequests()
-//            .antMatchers(HttpMethod.POST, API + USER + "/*")
-//            .permitAll()
             .anyRequest()
             .authenticated()
         ;

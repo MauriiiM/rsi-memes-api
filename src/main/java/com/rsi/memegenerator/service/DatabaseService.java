@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class DatabaseService {
     @Value("${amazonRdsProperties.dbName}")
     private String dbName;
-    @Value("${amazonRdsProperties.hostname}")
-    private String hostname;
+    @Value("${amazonRdsProperties.endpoint}")
+    private String endpoint;
     @Value("${amazonRdsProperties.region}")
     private String region;
     @Value("${amazonRdsProperties.port}")
@@ -88,7 +88,7 @@ public class DatabaseService {
      * Autocommits defaults to true.
      */
     private Connection openRemoteConnection() throws SQLException {
-        String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName;
+        String jdbcUrl = "jdbc:mysql://" + endpoint + ":" + port + "/" + dbName;
         System.out.println("Connecting to database: " + jdbcUrl);
         Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
         return connection;

@@ -1,10 +1,6 @@
 package com.rsi.memegenerator.controller;
 
 
-import org.springframework.web.bind.annotation.*;
-import static com.rsi.memegenerator.constant.URLConstants.API;
-import static com.rsi.memegenerator.constant.URLConstants.USER;
-
 //@Controller
 //@RestController
 //@RequestMapping(API + USER)

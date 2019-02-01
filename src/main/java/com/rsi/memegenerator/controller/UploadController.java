@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.rsi.memegenerator.constant.URLConstants.*;
+import static com.rsi.memegenerator.constant.Routes.*;
 
 @RestController
 @RequestMapping(STORAGE)
@@ -28,14 +28,14 @@ public class UploadController {
 
     @PostMapping(IMAGES)
     public String uploadMeme(@RequestPart(value = "file") MultipartFile image, @RequestPart String tags) {
-        String response;
+        String response = null;
         try {
             Meme uploadedMeme = s3Service.upload(image, IMAGES);
             uploadedMeme.setTags(tags.toLowerCase().split(" "));
             dbService.insert(uploadedMeme);
             response = "uploaded";
         } catch (IOException | SQLException e){
-            response = "nil"; //@TODO research more into this
+            response = null; //@TODO research more into this
         }
         return response;
     }

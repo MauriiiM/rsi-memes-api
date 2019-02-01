@@ -1,6 +1,6 @@
 amazonProperties:
-  accessKey: XXXXXXXXXXXXXXXXXXXX
-  secretKey: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  accessKey: AKIAINIQZBYM72Z3CUPA
+  secretKey: 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
 
 amazonStorageProperties:
   endpointUrl: https://s3.us-west-2.amazonaws.com
@@ -8,9 +8,9 @@ amazonStorageProperties:
 
 amazonRdsProperties:
   driver: com.mysql.cj.jdbc.Driver
-  dbName: XXXXXXXXX
-  hostname: rsi-memes.cvdjwayq6x4k.us-west-2.rds.amazonaws.com
-  region: us-west-2a
+  dbName: RSI_memes_west
+  endpoint: rsi-memes-west.cc3u1nwicnba.us-east-2.rds.amazonaws.com
   port: 3306
-  username: XXXXXXXXX
-  password: XXXXXXXXX
+  region: us-east-2a
+  username: RSI_memes_west
+  password: 20JAs18!
