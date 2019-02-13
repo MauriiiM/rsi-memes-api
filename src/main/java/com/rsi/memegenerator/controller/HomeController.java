@@ -6,8 +6,6 @@ import java.io.IOException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.rsi.memegenerator.constant.Routes.UI;
-
 @RestController
 public class HomeController {
     @GetMapping(value = "/")

@@ -24,6 +24,7 @@ public class DatabaseService {
     private Statement setupStatement;
 
     /**
+     * @TODO check if table exists first if not create it
      * Insert a meme to the database
      *
      * @param meme containing fields needed to insert into database
