@@ -1,0 +1,16 @@
+amazonProperties:
+  accessKey: XXXXXXXXXXXXXX
+  secretKey: XXXXXXXXXXXXXXXXXXXXXXXXX
+
+amazonStorageProperties:
+  endpointUrl: https://s3.us-west-2.amazonaws.com
+  bucketName: XXXXXXXXXXXX
+
+amazonRdsProperties:
+  driver: com.mysql.cj.jdbc.Driver
+  dbName: XXXXXXXXXXXXXXXXX
+  endpoint: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.com
+  port: 3306
+  region: us-east-2c
+  username: XXXXXXX
+  password: XXXXXXXX
